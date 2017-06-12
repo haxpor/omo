@@ -36,9 +36,7 @@ class GameStateManager(game: Game){
     }
 
     fun render() {
-        for (state in this.gameStates) {
-            state.render()
-        }
+        this.gameStates.peek().render()
     }
 
     private fun getState(state: Int): GameState? {
