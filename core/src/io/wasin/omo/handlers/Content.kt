@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
 /**
  * Created by haxpor on 5/17/17.
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture
 class Content {
 
     private var textures: HashMap<String, Texture> = HashMap()
+    private var textureAtlases: HashMap<String, TextureAtlas> = HashMap()
     private var sounds: HashMap<String, Sound> = HashMap()
     private var musics: HashMap<String, Music> = HashMap()
 
@@ -30,6 +32,15 @@ class Content {
             textures.remove(key)
             tex.dispose()
         }
+    }
+
+    // ** TextureAtlases ** //
+    fun loadAtlas(path: String, key: String) {
+        textureAtlases.put(key, TextureAtlas(Gdx.files.internal(path)))
+    }
+
+    fun getAtlas(key: String): TextureAtlas? {
+        return textureAtlases[key]
     }
 
     // ** Sounds ** //

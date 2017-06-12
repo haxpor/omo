@@ -35,28 +35,10 @@ class Game : ApplicationAdapter() {
 		// create player's savefile manager with pre-set of savefile's path
 		playerSaveFileManager = PlayerSaveFileManager(Settings.PLAYER_SAVEFILE_RELATIVE_PATH)
 
-		/*res.loadTexture("images/bunny.png", "bunny")
-		res.loadTexture("images/crystal.png", "crystal")
-		res.loadTexture("images/hud.png", "hud")
-		res.loadTexture("images/bgs.png", "bgs")
-		res.loadTexture("images/menu.png", "menu")
-		res.loadTexture("images/spikes.png", "spikes")
-		res.loadTexture("images/misc.png", "misc")
-
-		res.loadMusic("music/bbsong.mp3", "bbsong")
-		res.loadSound("sfx/changeblock.wav", "changeblock")
-		res.loadSound("sfx/crystal.wav", "crystal")
-		res.loadSound("sfx/hit.wav", "hit")
-		res.loadSound("sfx/jump.wav", "jump")
-		res.loadSound("sfx/levelselect.wav", "levelselect")*/
-
-		// set to play background music endlessly now
-		/*val bgMusic = res.getMusic("bbsong")!!
-		bgMusic.play()
-		bgMusic.isLooping = true*/
+		res.loadAtlas("pack.atlas", "pack")
 
 		// set to begin with Play state
-		gsm.pushState(GameStateManager.MAINMENU)
+		gsm.pushState(GameStateManager.PLAY)
 	}
 
 	override fun render() {

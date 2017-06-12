@@ -11,8 +11,6 @@ import io.wasin.omo.handlers.*
 class Mainmenu(gsm: GameStateManager): GameState(gsm) {
 
     init {
-        Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
-
         // read player's savefile
         // this will read it into cache, thus it will be maintained and used throughout the life
         // cycle of the game
@@ -43,6 +41,7 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
     }
 
     override fun render() {
+        Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
     }
 
