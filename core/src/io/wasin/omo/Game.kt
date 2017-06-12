@@ -16,9 +16,9 @@ class Game : ApplicationAdapter() {
 
 	companion object {
 		const val TITLE = "OMO"
-		const val V_WIDTH = 320f
-		const val V_HEIGHT = 240f
-		const val SCALE = 2
+		const val V_WIDTH = 480f
+		const val V_HEIGHT = 800f
+		const val SCALE = 1
 
 		var res: Content = Content()
 			private set

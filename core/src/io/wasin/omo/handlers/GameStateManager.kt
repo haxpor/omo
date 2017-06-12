@@ -24,10 +24,7 @@ class GameStateManager(game: Game){
     }
 
     companion object {
-        const val PLAY = 5000
-        const val LEVEL_SELECTION = 5001
-        const val SCORE = 5002
-        const val MAINMENU = 5003
+        const val MAINMENU = 5001
     }
 
     fun update(dt: Float) {
