@@ -43,11 +43,11 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     }
 
     override fun handleInput() {
-
+        
     }
 
     override fun update(dt: Float) {
-
+        handleInput()
     }
 
     override fun render() {

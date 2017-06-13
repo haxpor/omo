@@ -11,7 +11,7 @@ class Tile(x: Float, y: Float, width: Float, height: Float): Box(x, y, width - 8
     private val light: TextureRegion
     private val dark: TextureRegion
 
-    private var selected: Boolean = false
+    var selected: Boolean = false
 
     init {
         val atlas = Game.res.getAtlas("pack")!!
@@ -24,6 +24,11 @@ class Tile(x: Float, y: Float, width: Float, height: Float): Box(x, y, width - 8
     }
 
     fun render(sb: SpriteBatch) {
-        sb.draw(light, x - width / 2, y - height / 2, width, height)
+        if (selected) {
+            sb.draw(light, x - width / 2, y - height / 2, width, height)
+        }
+        else {
+            sb.draw(dark, x - width / 2, y - height / 2, width, height)
+        }
     }
 }
