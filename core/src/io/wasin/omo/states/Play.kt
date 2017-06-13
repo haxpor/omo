@@ -2,6 +2,7 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.math.Vector3
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.ui.Tile
@@ -14,17 +15,24 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     private var tiles: ArrayList<ArrayList<Tile>> = arrayListOf()
     private var tileSize: Float
     private var boardOffset: Float
+    private var boardHeight: Float
+    private var mouse: Vector3 = Vector3.Zero
 
     object GRID {
         const val NUM_ROWS: Int = 4
         const val NUM_COLS: Int = 4
     }
 
+    object MultiTouch {
+        const val MAX_FINGERS: Int = 2
+    }
+
     init {
 
         // create tiles based on fixed setting of GRID
         tileSize = Game.V_WIDTH / ( if (GRID.NUM_COLS >= GRID.NUM_ROWS) GRID.NUM_COLS else GRID.NUM_ROWS )
-        boardOffset = (Game.V_HEIGHT - tileSize * GRID.NUM_ROWS)/2
+        boardHeight = tileSize * GRID.NUM_ROWS
+        boardOffset = (Game.V_HEIGHT - boardHeight)/2
 
         for (row in 0..GRID.NUM_ROWS-1) {
             tiles.add(row, arrayListOf())
@@ -43,7 +51,24 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     }
 
     override fun handleInput() {
-        
+        for (i in 0..MultiTouch.MAX_FINGERS-1) {
+            if (Gdx.input.isTouched(i)) {
+                mouse.x = Gdx.input.getX(i).toFloat()
+                mouse.y = Gdx.input.getY(i).toFloat()
+                cam.unproject(mouse)
+
+                if (mouse.y >= boardOffset && mouse.y <= boardOffset + boardHeight) {
+
+                    val row: Int = ((mouse.y - boardOffset) / tileSize).toInt()
+                    val col: Int = (mouse.x / tileSize).toInt()
+
+                    if (row >= 0 && row < tiles.count() &&
+                            col >= 0 && col < tiles[row].count()) {
+                        tiles[row][col].selected = true
+                    }
+                }
+            }
+        }
     }
 
     override fun update(dt: Float) {
