@@ -19,8 +19,8 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     private var mouse: Vector3 = Vector3.Zero
 
     object GRID {
-        const val NUM_ROWS: Int = 4
-        const val NUM_COLS: Int = 4
+        const val NUM_ROWS: Int = 6
+        const val NUM_COLS: Int = 6
     }
 
     object MultiTouch {
@@ -46,6 +46,7 @@ class Play(gsm: GameStateManager): GameState(gsm) {
                             tileSize
                         )
                 )
+                tiles[row][col].setTimer(-((GRID.NUM_ROWS - row) * 0.02f) - col * 0.05f)
             }
         }
     }
@@ -73,6 +74,13 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     override fun update(dt: Float) {
         handleInput()
+
+        // tiles
+        for (row in 0..tiles.count()-1) {
+            for (col in 0..tiles[row].count()-1) {
+                tiles[row][col].update(dt)
+            }
+        }
     }
 
     override fun render() {
