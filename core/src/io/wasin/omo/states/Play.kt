@@ -21,6 +21,9 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     private var mouse: Vector3 = Vector3.Zero
     lateinit private var finished: Array<Tile>
 
+    private var showing: Boolean = true
+    private var showTimer: Float = 0.0f
+
     object MultiTouch {
         const val MAX_FINGERS: Int = 2
     }
@@ -34,7 +37,7 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     override fun handleInput() {
         for (i in 0..MultiTouch.MAX_FINGERS-1) {
-            if (Gdx.input.isTouched(i)) {
+            if (!showing && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
                 mouse.y = Gdx.input.getY(i).toFloat()
                 cam.unproject(mouse)
@@ -55,6 +58,18 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     override fun update(dt: Float) {
         handleInput()
+
+        if (showing) {
+            showTimer += dt
+            if (showTimer > 5f) {
+                showing = false
+
+                // go through everything and unselected each tile
+                for (selectedTile in finished) {
+                    selectedTile.selected = false
+                }
+            }
+        }
 
         // tiles
         for (row in 0..tiles.count()-1) {
@@ -114,6 +129,9 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     private fun createFinished() {
         finished = Array()
+
+        showing = true
+        showTimer = 0f
 
         var numTilesToLight = 4
         for (i in 0..numTilesToLight-1) {
