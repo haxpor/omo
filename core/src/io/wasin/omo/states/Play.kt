@@ -19,7 +19,9 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     private var boardOffset: Float = -1f
     private var boardHeight: Float = -1f
     private var mouse: Vector3 = Vector3.Zero
-    lateinit private var finished: Array<Tile>
+
+    private var selected: Array<Tile>
+    private var finished: Array<Tile>
 
     private var showing: Boolean = true
     private var showTimer: Float = 0.0f
@@ -29,6 +31,10 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     }
 
     init {
+
+        // initially create empty array for selected, and finished first
+        selected = Array()
+        finished = Array()
 
         // create board
         createBoard(3, 3)
@@ -48,8 +54,17 @@ class Play(gsm: GameStateManager): GameState(gsm) {
                     val col: Int = (mouse.x / tileSize).toInt()
 
                     if (row >= 0 && row < tiles.count() &&
-                            col >= 0 && col < tiles[row].count()) {
+                            col >= 0 && col < tiles[row].count() &&
+                            !tiles[row][col].selected) {
+
                         tiles[row][col].selected = true
+                        selected.add(tiles[row][col])
+
+                        // if finished then restart the board again
+                        if (checkIsFinished()) {
+                            createBoard(3, 3)
+                            createFinished()
+                        }
                     }
                 }
             }
@@ -110,6 +125,8 @@ class Play(gsm: GameStateManager): GameState(gsm) {
         boardHeight = tileSize * numRow
         boardOffset = (Game.V_HEIGHT - boardHeight)/2
 
+        tiles.clear()
+
         for (row in 0..numRow-1) {
             tiles.add(row, arrayListOf())
 
@@ -128,7 +145,9 @@ class Play(gsm: GameStateManager): GameState(gsm) {
     }
 
     private fun createFinished() {
-        finished = Array()
+
+        selected.clear()
+        finished.clear()
 
         showing = true
         showTimer = 0f
@@ -144,5 +163,15 @@ class Play(gsm: GameStateManager): GameState(gsm) {
             finished.add(tiles[row][col])
             tiles[row][col].selected = true
         }
+    }
+
+    private fun checkIsFinished(): Boolean {
+        for (f in finished) {
+            if (!selected.contains(f, true)) {
+                return false
+            }
+        }
+
+        return true
     }
 }
