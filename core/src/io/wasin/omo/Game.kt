@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import io.wasin.omo.handlers.*
+import io.wasin.omo.states.Play
 
 class Game : ApplicationAdapter() {
 
@@ -37,8 +38,8 @@ class Game : ApplicationAdapter() {
 
 		res.loadAtlas("pack.atlas", "pack")
 
-		// set to begin with Play state
-		gsm.pushState(GameStateManager.PLAY)
+		// begin with Easy difficulty of Play state
+		gsm.pushState(Play(gsm, Play.Difficulty.EASY))
 	}
 
 	override fun render() {

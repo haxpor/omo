@@ -42,13 +42,17 @@ class GameStateManager(game: Game){
 
     private fun getState(state: Int): GameState? {
         if (state == MAINMENU) return Mainmenu(this)
-        else if (state == PLAY) return Play(this)
+        else if (state == PLAY) return Play(this, Play.Difficulty.EASY) // default to Easy difficulty for barebone constructor
         return null
     }
 
     fun setState(state: Int) {
         this.gameStates.clear()
         this.pushState(state)
+    }
+
+    fun pushState(gameState: GameState) {
+        this.gameStates.push(gameState)
     }
 
     fun pushState(state: Int) {
