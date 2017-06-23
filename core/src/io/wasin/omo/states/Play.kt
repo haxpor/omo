@@ -2,7 +2,9 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.utils.Array
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.ui.Tile
@@ -13,15 +15,11 @@ import io.wasin.omo.ui.Tile
 class Play(gsm: GameStateManager): GameState(gsm) {
 
     private var tiles: ArrayList<ArrayList<Tile>> = arrayListOf()
-    private var tileSize: Float
-    private var boardOffset: Float
-    private var boardHeight: Float
+    private var tileSize: Float = -1f
+    private var boardOffset: Float = -1f
+    private var boardHeight: Float = -1f
     private var mouse: Vector3 = Vector3.Zero
-
-    object GRID {
-        const val NUM_ROWS: Int = 6
-        const val NUM_COLS: Int = 6
-    }
+    lateinit private var finished: Array<Tile>
 
     object MultiTouch {
         const val MAX_FINGERS: Int = 2
@@ -29,26 +27,9 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     init {
 
-        // create tiles based on fixed setting of GRID
-        tileSize = Game.V_WIDTH / ( if (GRID.NUM_COLS >= GRID.NUM_ROWS) GRID.NUM_COLS else GRID.NUM_ROWS )
-        boardHeight = tileSize * GRID.NUM_ROWS
-        boardOffset = (Game.V_HEIGHT - boardHeight)/2
-
-        for (row in 0..GRID.NUM_ROWS-1) {
-            tiles.add(row, arrayListOf())
-
-            for (col in 0..GRID.NUM_COLS-1) {
-                tiles[row].add(col,
-                        Tile(
-                            col * tileSize + tileSize/2,
-                            row * tileSize + boardOffset + tileSize/2,
-                            tileSize,
-                            tileSize
-                        )
-                )
-                tiles[row][col].setTimer(-((GRID.NUM_ROWS - row) * 0.02f) - col * 0.05f)
-            }
-        }
+        // create board
+        createBoard(3, 3)
+        createFinished()
     }
 
     override fun handleInput() {
@@ -106,5 +87,44 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     override fun resize_user(width: Int, height: Int) {
 
+    }
+
+    private fun createBoard(numRow: Int, numCol: Int) {
+        // create tiles based on fixed setting of GRID
+        tileSize = Game.V_WIDTH / ( if (numCol >= numRow) numCol else numRow )
+        boardHeight = tileSize * numRow
+        boardOffset = (Game.V_HEIGHT - boardHeight)/2
+
+        for (row in 0..numRow-1) {
+            tiles.add(row, arrayListOf())
+
+            for (col in 0..numCol-1) {
+                tiles[row].add(col,
+                        Tile(
+                                col * tileSize + tileSize/2,
+                                row * tileSize + boardOffset + tileSize/2,
+                                tileSize,
+                                tileSize
+                        )
+                )
+                tiles[row][col].setTimer(-((numRow - row) * 0.02f) - col * 0.05f)
+            }
+        }
+    }
+
+    private fun createFinished() {
+        finished = Array()
+
+        var numTilesToLight = 4
+        for (i in 0..numTilesToLight-1) {
+            var row = 0
+            var col = 0
+            do {
+                row = MathUtils.random(tiles.count() - 1)
+                col = MathUtils.random(tiles[row].count() - 1)
+            } while(finished.contains(tiles[row][col], true))
+            finished.add(tiles[row][col])
+            tiles[row][col].selected = true
+        }
     }
 }
