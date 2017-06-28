@@ -2,38 +2,32 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.SerializationException
+import io.wasin.omo.Game
 import io.wasin.omo.handlers.*
+import io.wasin.omo.ui.Graphic
+import io.wasin.omo.ui.TextImage
 
 /**
  * Created by haxpor on 5/30/17.
  */
 class Mainmenu(gsm: GameStateManager): GameState(gsm) {
 
-    init {
-        // read player's savefile
-        // this will read it into cache, thus it will be maintained and used throughout the life
-        // cycle of the game
-        try {
-            Gdx.app.log("Mainmenu", "read save file")
-            game.playerSaveFileManager.readSaveFile()
-        }
-        catch(e: GameRuntimeException) {
-            if (e.code == GameRuntimeException.SAVE_FILE_NOT_FOUND ||
-                    e.code == GameRuntimeException.SAVE_FILE_EMPTY_CONTENT) {
-                // write a new fresh save file to resolve the issue
-                Gdx.app.log("Mainmenu", "write a fresh save file")
-                game.playerSaveFileManager.writeFreshSaveFile(Settings.TOTAL_LEVELS)
-            }
-        }
-        catch(e: SerializationException) {
-            Gdx.app.log("Mainmenu", "save file is corrupted, rewrite a fresh one : ${e.message}")
-
-            game.playerSaveFileManager.writeFreshSaveFile(Settings.TOTAL_LEVELS)
-        }
-    }
+    private var touchPos: Vector3 = Vector3.Zero
+    private var title: Graphic = Graphic(Game.res.getAtlas("pack")!!.findRegion("omo"), Game.V_WIDTH/2, Game.V_HEIGHT/2 + 100)
+    private var play: TextImage = TextImage("play", Game.V_WIDTH/2, Game.V_HEIGHT/2-50)
 
     override fun handleInput() {
+        if (Gdx.input.isTouched) {
+            touchPos.x = Gdx.input.x.toFloat()
+            touchPos.y = Gdx.input.y.toFloat()
+            hudCam.unproject(touchPos)
+
+            if (play.contains(touchPos.x, touchPos.y)) {
+                gsm.setState(Play(gsm, Play.Difficulty.NORMAL))
+            }
+        }
     }
 
     override fun update(dt: Float) {
@@ -43,6 +37,12 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
     override fun render() {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+        sb.projectionMatrix = hudCam.combined
+        sb.begin()
+        title.render(sb)
+        play.render(sb)
+        sb.end()
     }
 
     override fun dispose() {

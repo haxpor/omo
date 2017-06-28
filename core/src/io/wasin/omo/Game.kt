@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import io.wasin.omo.handlers.*
+import io.wasin.omo.states.Play
 
 class Game : ApplicationAdapter() {
 
@@ -11,14 +12,11 @@ class Game : ApplicationAdapter() {
 		private set
 	lateinit var gsm: GameStateManager
 		private set
-	lateinit var playerSaveFileManager: PlayerSaveFileManager
-		private set
 
 	companion object {
 		const val TITLE = "OMO"
 		const val V_WIDTH = 480f
 		const val V_HEIGHT = 800f
-		const val SCALE = 1
 
 		var res: Content = Content()
 			private set
@@ -32,13 +30,10 @@ class Game : ApplicationAdapter() {
 
 		gsm = GameStateManager(this)
 
-		// create player's savefile manager with pre-set of savefile's path
-		playerSaveFileManager = PlayerSaveFileManager(Settings.PLAYER_SAVEFILE_RELATIVE_PATH)
+		res.loadAtlas("pack.pack", "pack")
 
-		res.loadAtlas("pack.atlas", "pack")
-
-		// set to begin with Play state
-		gsm.pushState(GameStateManager.PLAY)
+		// begin with Easy difficulty of Play state
+		gsm.pushState(GameStateManager.MAINMENU)
 	}
 
 	override fun render() {

@@ -13,7 +13,22 @@ import io.wasin.omo.ui.Tile
 /**
  * Created by haxpor on 6/13/17.
  */
-class Play(gsm: GameStateManager): GameState(gsm) {
+class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
+
+    object MultiTouch {
+        const val MAX_FINGERS: Int = 2
+    }
+
+    enum class Difficulty {
+        EASY,
+        NORMAL,
+        HARD,
+        INSANE
+    }
+
+    private var level: Int = 1
+    private var maxLevel: Int = 3
+    private var difficulty: Difficulty = difficulty
 
     private var tiles: ArrayList<ArrayList<Tile>> = arrayListOf()
     private var tileSize: Float = -1f
@@ -29,19 +44,17 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
     private var prevPosTouched: kotlin.Array<Pair<Int, Int>> = kotlin.Array(MultiTouch.MAX_FINGERS, { _ -> Pair(-1, -1)})
 
-    object MultiTouch {
-        const val MAX_FINGERS: Int = 2
-    }
-
     init {
 
         // initially create empty array for selected, and finished first
         selected = Array()
         finished = Array()
 
+        val args = getArgs(difficulty)
+
         // create board
-        createBoard(3, 3)
-        createFinished()
+        createBoard(args[0], args[1])
+        createFinished(args[2])
     }
 
     override fun handleInput() {
@@ -76,14 +89,18 @@ class Play(gsm: GameStateManager): GameState(gsm) {
 
                         // if finished then restart the board again
                         if (checkIsFinished()) {
-                            createBoard(3, 3)
-                            createFinished()
+                            level++
+                            if (level > maxLevel) {
+                                done()
+                            }
+                            val args = getArgs(difficulty)
+                            createBoard(args[0], args[1])
+                            createFinished(args[2])
                         }
                     }
 
                     // save for previous touched position
                     prevPosTouched[i] = Pair(row, col)
-                    Gdx.app.log("Play", "Touched at $row, $col")
                 }
             }
 
@@ -185,7 +202,7 @@ class Play(gsm: GameStateManager): GameState(gsm) {
         }
     }
 
-    private fun createFinished() {
+    private fun createFinished(numTilesToLight: Int) {
 
         selected.clear()
         finished.clear()
@@ -193,10 +210,11 @@ class Play(gsm: GameStateManager): GameState(gsm) {
         showing = true
         showTimer = 0f
 
-        var numTilesToLight = 4
         for (i in 0..numTilesToLight-1) {
+
             var row = 0
             var col = 0
+
             do {
                 row = MathUtils.random(tiles.count() - 1)
                 col = MathUtils.random(tiles[row].count() - 1)
@@ -217,5 +235,81 @@ class Play(gsm: GameStateManager): GameState(gsm) {
         }
 
         return true
+    }
+
+    private fun getArgs(difficulty: Difficulty): kotlin.Array<Int> {
+        // create arguments
+        // arguments are as follows
+        // => number of rows, number of columns, and num tiles to light
+        val args = kotlin.Array(3, { _ -> 0 })
+
+        if (difficulty == Difficulty.EASY) {
+            args[0] = 3
+            args[1] = 3
+            if (level in 1..3) {
+                args[2] = 3
+            }
+            else if (level in 4..5){
+                args[2] = 4
+            }
+            maxLevel = 5
+        }
+        else if (difficulty == Difficulty.NORMAL) {
+            args[0] = 4
+            args[1] = 4
+            if (level in 1..2) {
+                args[2] = 4
+            }
+            else if (level in 3..4) {
+                args[2] = 5
+            }
+            else if (level in 5..6) {
+                args[2] = 6
+            }
+            maxLevel = 6
+        }
+        else if (difficulty == Difficulty.HARD) {
+            args[0] = 5
+            args[1] = 5
+            if (level in 1..2) {
+                args[2] = 6
+            }
+            else if (level in 3..4) {
+                args[2] = 7
+            }
+            else if (level in 5..6) {
+                args[2] = 8
+            }
+            else if (level in 7..8) {
+                args[2] = 9
+            }
+            maxLevel = 8
+        }
+        else if (difficulty == Difficulty.INSANE) {
+            args[0] = 6
+            args[1] = 6
+            if (level in 1..2) {
+                args[2] = 8
+            }
+            else if (level in 3..4) {
+                args[2] = 9
+            }
+            else if (level in 5..6) {
+                args[2] = 10
+            }
+            else if (level in 7..8) {
+                args[2] = 11
+            }
+            else if (level in 9..10) {
+                args[2] = 12
+            }
+            maxLevel = 10
+        }
+
+        return args
+    }
+
+    private fun done() {
+
     }
 }

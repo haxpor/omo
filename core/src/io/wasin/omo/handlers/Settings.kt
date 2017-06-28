@@ -5,7 +5,6 @@ package io.wasin.omo.handlers
  */
 class Settings {
     companion object {
-        const val PLAYER_SAVEFILE_RELATIVE_PATH: String = "player.json"
-        const val TOTAL_LEVELS: Int = 15
+        // nothing here at the moment
     }
 }
