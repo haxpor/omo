@@ -2,6 +2,7 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
@@ -51,9 +52,16 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var prevPosTouched: kotlin.Array<Pair<Int, Int>> = kotlin.Array(MultiTouch.MAX_FINGERS, { _ -> Pair(-1, -1)})
 
+    private var light: TextureRegion
+    private var dark: TextureRegion
+
     init {
 
         scoreTextImage = ScoreTextImage(Game.V_WIDTH/2, Game.V_HEIGHT - 70)
+
+        val texture = Game.res.getAtlas("pack")!!
+        light = texture.findRegion("light")
+        dark = texture.findRegion("dark")
 
         // initially create empty array for selected, and finished first
         selected = Array()
@@ -149,7 +157,21 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         sb.projectionMatrix = cam.combined
         sb.begin()
 
+        // render score
         scoreTextImage.render(sb)
+
+        // render level indicator
+        val allLevelsWidth = (2*maxLevel - 1)*10
+        for (i in 0..maxLevel-1) {
+            if (i+1 <= level) {
+                sb.draw(light, Game.V_WIDTH/2 - allLevelsWidth/2 + 20*i, Game.V_HEIGHT - 125, 10f, 10f)
+            }
+            else {
+                sb.draw(dark, Game.V_WIDTH/2 - allLevelsWidth/2 + 20*i, Game.V_HEIGHT - 125, 10f, 10f)
+            }
+        }
+
+        // render tiles
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].render(sb)
