@@ -2,6 +2,7 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
@@ -186,7 +187,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         }
     }
 
-    override fun render() {
+    override fun render(sb: SpriteBatch) {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 

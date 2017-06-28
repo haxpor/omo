@@ -2,6 +2,7 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.ui.TextImage
@@ -23,7 +24,7 @@ class Score(gsm: GameStateManager, score: Int): GameState(gsm) {
         handleInput()
     }
 
-    override fun render() {
+    override fun render(sb: SpriteBatch) {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
