@@ -46,6 +46,11 @@ class GameStateManager(game: Game){
         return null
     }
 
+    fun setState(gameState: GameState) {
+        this.gameStates.clear()
+        this.gameStates.push(gameState)
+    }
+
     fun setState(state: Int) {
         this.gameStates.clear()
         this.pushState(state)

@@ -2,6 +2,7 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.SerializationException
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.*
@@ -13,10 +14,20 @@ import io.wasin.omo.ui.TextImage
  */
 class Mainmenu(gsm: GameStateManager): GameState(gsm) {
 
+    private var touchPos: Vector3 = Vector3.Zero
     private var title: Graphic = Graphic(Game.res.getAtlas("pack")!!.findRegion("omo"), Game.V_WIDTH/2, Game.V_HEIGHT/2 + 100)
     private var play: TextImage = TextImage("play", Game.V_WIDTH/2, Game.V_HEIGHT/2-50)
 
     override fun handleInput() {
+        if (Gdx.input.isTouched) {
+            touchPos.x = Gdx.input.x.toFloat()
+            touchPos.y = Gdx.input.y.toFloat()
+            hudCam.unproject(touchPos)
+
+            if (play.contains(touchPos.x, touchPos.y)) {
+                gsm.setState(Play(gsm, Play.Difficulty.NORMAL))
+            }
+        }
     }
 
     override fun update(dt: Float) {
