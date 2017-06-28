@@ -26,6 +26,7 @@ class GameStateManager(game: Game){
     companion object {
         const val MAINMENU = 5001
         const val PLAY = 5002
+        const val DIFFICULTY = 5003
     }
 
     fun update(dt: Float) {
@@ -43,6 +44,7 @@ class GameStateManager(game: Game){
     private fun getState(state: Int): GameState? {
         if (state == MAINMENU) return Mainmenu(this)
         else if (state == PLAY) return Play(this, Play.Difficulty.EASY) // default to Easy difficulty for barebone constructor
+        else if (state == DIFFICULTY) return Difficulty(this)
         return null
     }
 
