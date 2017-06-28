@@ -8,7 +8,9 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
+import io.wasin.omo.ui.Glow
 import io.wasin.omo.ui.ScoreTextImage
+import io.wasin.omo.ui.SizingTile
 import io.wasin.omo.ui.Tile
 
 /**
@@ -38,7 +40,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     private var maxLevel: Int = 3
     private var difficulty: Difficulty = difficulty
 
-    private var tiles: ArrayList<ArrayList<Tile>> = arrayListOf()
+    private var tiles: ArrayList<ArrayList<SizingTile>> = arrayListOf()
     private var tileSize: Float = -1f
     private var boardOffset: Float = -1f
     private var boardHeight: Float = -1f
@@ -46,6 +48,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var selected: Array<Tile>
     private var finished: Array<Tile>
+    private var glows: Array<Glow>
 
     private var showing: Boolean = true
     private var showTimer: Float = 0.0f
@@ -66,6 +69,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         // initially create empty array for selected, and finished first
         selected = Array()
         finished = Array()
+        glows = Array()
 
         val args = getArgs(difficulty)
 
@@ -89,8 +93,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
                     if (row >= 0 && row < tiles.count() &&
                             col >= 0 && col < tiles[row].count() &&
-                            row != prevPosTouched[i].first ||
-                            col != prevPosTouched[i].second) {
+                            (row != prevPosTouched[i].first ||
+                            col != prevPosTouched[i].second)) {
 
                         val tile = tiles[row][col]
                         tile.selected = !tile.selected
@@ -98,6 +102,9 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         // add to selected array if it's highlighted
                         if (tile.selected) {
                             selected.add(tile)
+
+                            // add glow effect
+                            glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
                         }
                         // removed from selected array if it's deselected
                         else {
@@ -142,6 +149,15 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         checkToShowObjective(dt)
         checkToCountdownScoreTimer(dt)
 
+        // update glows
+        for (i in glows.count()-1 downTo 0) {
+            glows[i].update(dt)
+
+            if (glows[i].shouldBeRemoved) {
+                glows.removeIndex(i)
+            }
+        }
+
         // tiles
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
@@ -176,6 +192,11 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].render(sb)
             }
+        }
+
+        // render glow
+        for (g in glows) {
+            g.render(sb)
         }
 
         sb.end()
@@ -236,14 +257,14 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
             for (col in 0..numCol-1) {
                 tiles[row].add(col,
-                        Tile(
+                        SizingTile(
                                 col * tileSize + tileSize/2,
                                 row * tileSize + boardOffset + tileSize/2,
                                 tileSize,
                                 tileSize
                         )
                 )
-                tiles[row][col].setTimer(-((numRow - row) * 0.02f) - col * 0.05f)
+                tiles[row][col].timer = -((numRow - row) * 0.02f) - col * 0.05f
             }
         }
     }

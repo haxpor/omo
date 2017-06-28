@@ -5,10 +5,14 @@ package io.wasin.omo.ui
  */
 open class Box(x: Float, y: Float, width: Float, height: Float) {
 
-    protected var x: Float = x
-    protected var y: Float = y
-    protected var width: Float = width
-    protected var height: Float = height
+    var x: Float = x
+        protected set
+    var y: Float = y
+        protected set
+    var width: Float = width
+        protected set
+    var height: Float = height
+        protected set
 
     fun contains(x: Float, y: Float): Boolean {
         return x > this.x - width / 2 &&
