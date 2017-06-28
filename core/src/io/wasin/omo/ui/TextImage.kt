@@ -19,10 +19,7 @@ class TextImage(text: String, x: Float, y: Float): Box(x, y, 50.0f * text.length
     init {
         // process TextureRegion
         val sheet = Game.res.getAtlas("pack")!!.findRegion("fontsheet")
-        val numCols = sheet.regionWidth / SIZE
-        val numRows = sheet.regionHeight / SIZE
-
-        fontSheets = Array(numRows, { row -> Array(numCols, { col -> TextureRegion(sheet, SIZE*col, SIZE*row, SIZE, SIZE) }) })
+        fontSheets = sheet.split(SIZE, SIZE)
     }
 
     fun render(sb: SpriteBatch) {
