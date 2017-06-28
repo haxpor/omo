@@ -24,7 +24,7 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
             hudCam.unproject(touchPos)
 
             if (play.contains(touchPos.x, touchPos.y)) {
-                gsm.setState(GameStateManager.DIFFICULTY)
+                gsm.setState(Difficulty(gsm))
             }
         }
     }
