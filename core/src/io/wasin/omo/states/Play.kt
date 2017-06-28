@@ -103,12 +103,15 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         if (tile.selected) {
                             selected.add(tile)
 
-                            // add glow effect
+                            // add glow (grow type) effect
                             glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
                         }
                         // removed from selected array if it's deselected
                         else {
                             selected.removeValue(tile, true)
+
+                            // add glow (shrink type) effect
+                            glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, Glow.Type.SHRINK))
                         }
 
                         // if finished then restart the board again

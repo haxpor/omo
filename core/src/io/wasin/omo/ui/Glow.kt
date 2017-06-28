@@ -5,21 +5,38 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 /**
  * Created by haxpor on 6/29/17.
  */
-class Glow(x: Float, y: Float, width: Float, height: Float): Tile(x, y, width, height) {
+class Glow(x: Float, y: Float, width: Float, height: Float, type: Type=Type.GROW): Tile(x, y, width, height) {
 
     companion object {
         const val EFFECT_DURATION: Float = 0.5f
     }
 
+    enum class Type {
+        GROW,
+        SHRINK
+    }
+
     private var alpha: Float = 1.0f
+
+    var type: Type = type
+        private set
 
     var shouldBeRemoved: Boolean = false
     var timer: Float = 0f
+    var speed: Float = 200.0f
 
     override fun update(dt: Float) {
         timer += dt
-        width += dt * 200f
-        height += dt * 200f
+
+        // either grow or shrink depends on the type set
+        if (type == Type.GROW) {
+            width += dt * speed
+            height += dt * speed
+        }
+        else if (type == Type.SHRINK) {
+            width -= dt * speed
+            height -= dt * speed
+        }
 
         if (timer >= EFFECT_DURATION) {
             shouldBeRemoved = true
