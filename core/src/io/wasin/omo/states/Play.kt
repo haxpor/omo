@@ -3,12 +3,11 @@ package io.wasin.omo.states
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
-import io.wasin.omo.ui.Score
+import io.wasin.omo.ui.ScoreTextImage
 import io.wasin.omo.ui.Tile
 
 /**
@@ -31,7 +30,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         INSANE
     }
 
-    private var score: Score
+    private var scoreTextImage: ScoreTextImage
     private var scoreTimer: Float = LEVEL_TIMER
 
     private var level: Int = 1
@@ -54,7 +53,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     init {
 
-        score = Score(Game.V_WIDTH/2, Game.V_HEIGHT - 70)
+        scoreTextImage = ScoreTextImage(Game.V_WIDTH/2, Game.V_HEIGHT - 70)
 
         // initially create empty array for selected, and finished first
         selected = Array()
@@ -101,22 +100,20 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         if (checkIsFinished()) {
                             level++
 
+                            val addScore = Math.round(scoreTimer * 10f)
+                            scoreTextImage.addScore(addScore)
+
+                            val args = getArgs(difficulty)
+                            createBoard(args[0], args[1])
+                            createFinished(args[2])
+
+                            // reset scoreTextImage timer
+                            scoreTimer = LEVEL_TIMER
+
                             // check if it's done
                             if (level > maxLevel) {
                                 done()
                             }
-                            // if not then continue
-                            else {
-                                val addScore = Math.round(scoreTimer * 10f)
-                                score.addScore(addScore)
-
-                                val args = getArgs(difficulty)
-                                createBoard(args[0], args[1])
-                                createFinished(args[2])
-                            }
-
-                            // reset score timer
-                            scoreTimer = LEVEL_TIMER
                         }
                     }
 
@@ -152,7 +149,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         sb.projectionMatrix = cam.combined
         sb.begin()
 
-        score.render(sb)
+        scoreTextImage.render(sb)
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].render(sb)
@@ -337,6 +334,6 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     }
 
     private fun done() {
-        gsm.setState(GameStateManager.DIFFICULTY)
+        gsm.setState(Score(gsm, scoreTextImage.score))
     }
 }

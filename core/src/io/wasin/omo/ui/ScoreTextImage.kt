@@ -3,8 +3,8 @@ package io.wasin.omo.ui
 /**
  * Created by haxpor on 6/28/17.
  */
-class Score(x: Float, y: Float): TextImage("0", x, y) {
-    private var score: Int = 0
+class ScoreTextImage(x: Float, y: Float): TextImage("0", x, y) {
+    var score: Int = 0
 
     fun addScore(amount: Int) {
         score += amount
