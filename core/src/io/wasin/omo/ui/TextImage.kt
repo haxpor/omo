@@ -22,9 +22,7 @@ class TextImage(text: String, x: Float, y: Float): Box(x, y, 50.0f * text.length
         val numCols = sheet.regionWidth / SIZE
         val numRows = sheet.regionHeight / SIZE
 
-        fontSheets = Array(numRows, {
-            row -> Array(numCols, { col -> TextureRegion(sheet, SIZE*col, SIZE*row, SIZE, SIZE) })
-        })
+        fontSheets = Array(numRows, { row -> Array(numCols, { col -> TextureRegion(sheet, SIZE*col, SIZE*row, SIZE, SIZE) }) })
     }
 
     fun render(sb: SpriteBatch) {
