@@ -49,8 +49,15 @@ class Glow(x: Float, y: Float, width: Float, height: Float, type: Type=Type.GROW
         // get current color from spritebatch
         val color = sb.color
 
-        sb.setColor(1f, 1f, 1f, alpha)
-        sb.draw(light, x - width/2, y - height/2, width, height)
+        if (wrong) {
+            // set tint color to light red
+            sb.setColor(255.0f/255.0f, 61f/255f, 61f/255f, alpha)
+        }
+        else {
+            sb.setColor(1f, 1f, 1f, alpha)
+        }
+
+        sb.draw(light, x - width / 2, y - height / 2, width, height)
         sb.color = color
     }
 }

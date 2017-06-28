@@ -20,6 +20,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     companion object {
         const val LEVEL_TIMER: Float = 5.0f
+        const val RIGHT_MULTIPLY: Int = 10
+        const val WRONG_ABS_DEDUCT: Int = 5
     }
 
     object MultiTouch {
@@ -103,6 +105,17 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         if (tile.selected) {
                             selected.add(tile)
 
+                            // check if this selected tile is wrong
+                            if (!finished.contains(tile)) {
+                                tile.wrong = true
+
+                                // apply penalty
+                                scoreTextImage.addScore(-WRONG_ABS_DEDUCT)
+                            }
+                            else {
+                                tile.wrong = false
+                            }
+
                             // add glow (grow type) effect
                             glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
                         }
@@ -111,14 +124,18 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                             selected.removeValue(tile, true)
 
                             // add glow (shrink type) effect
-                            glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, Glow.Type.SHRINK))
+                            val glow = Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, Glow.Type.SHRINK)
+                            if (tile.wrong) {
+                                glow.wrong = true
+                            }
+                            glows.add(glow)
                         }
 
                         // if finished then restart the board again
                         if (checkIsFinished()) {
                             level++
 
-                            val addScore = Math.round(scoreTimer * 10f)
+                            val addScore = Math.round(scoreTimer * RIGHT_MULTIPLY)
                             scoreTextImage.addScore(addScore)
 
                             val args = getArgs(difficulty)
