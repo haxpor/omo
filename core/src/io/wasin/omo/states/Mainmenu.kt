@@ -41,6 +41,8 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         sb.projectionMatrix = hudCam.combined
+        hudViewport.apply(true)
+
         sb.begin()
         title.render(sb)
         play.render(sb)

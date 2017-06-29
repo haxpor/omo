@@ -10,7 +10,6 @@ object DesktopLauncher {
         config.width = (Game.V_WIDTH / 2).toInt()
         config.height = (Game.V_HEIGHT / 2).toInt()
         config.title = Game.TITLE
-        config.fullscreen = true
         LwjglApplication(Game(), config)
     }
 }
