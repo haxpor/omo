@@ -26,13 +26,14 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
 
     // black fade
     private var timer: Float = 0f
-    var maxTime: Float = 1f
+    private var maxTime: Float = 1f
     private var alpha: Float = 1f
 
     // expand
     lateinit private var expands: Array<Array<ExpandingTile>>
     private var doneExpanding: Boolean = false
     private var doneContracting: Boolean = false
+    private var delayTimerBetweenTile: Float = 0.025f
 
     init {
         if (type == Type.BLACK_FADE) {
@@ -46,7 +47,9 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
                             col * size + size/2,
                             row * size + size/2,
                             size,
-                            size)
+                            size).also {
+                                it.timer = (-(10 - row) - col) * delayTimerBetweenTile
+                            }
                     })
             })
         }
@@ -67,35 +70,36 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
         }
         // duration of transition depends on 2 * effectDuration of ExpandingTile
         else if (type == Type.EXPAND) {
-            var isNeedToSetDoneExpanding = false
-            var isNeedToSetDoneContracting = false
+            var isAllDoneExpanding = true
+            var isAllDoneContracting = true
             expands.forEach {
                 it.forEach {
                     it.update(dt)
 
-                    // check if tile expands to final state
-                    // thus we need to start contract
-                    if (it.isDoneExpanding && !isNeedToSetDoneExpanding && !doneExpanding) {
-                        isNeedToSetDoneExpanding = true
+                    // if at least one is not done expanding yet, then reset flag
+                    if (!it.isDoneExpanding && !doneExpanding) {
+                        isAllDoneExpanding = false
                     }
-                    else if (it.isDoneContracting && !isNeedToSetDoneContracting && !doneContracting) {
-                        isNeedToSetDoneContracting = true
+                    // otherwise: if at least one is not done contracting yet, then reset flag
+                    else if (!it.isDoneContracting && !doneContracting) {
+                        isAllDoneContracting = false
                     }
                 }
             }
 
-            // if we need to set doneExpanding and it never been set before
-            if (isNeedToSetDoneExpanding && !doneExpanding) {
+            // if in expanding phase, and need to switch to contracting phase
+            if (isAllDoneExpanding && !doneExpanding && !doneContracting) {
                 doneExpanding = true
-                expands.forEach {
-                    it.forEach {
-                        it.setToContract()
+                expands.forEachIndexed { row, array ->
+                    array.forEachIndexed { col, tile ->
+                        tile.setToContract()
+                        tile.timer = (-(expands.size + row) + col) * delayTimerBetweenTile
                     }
                 }
             }
 
-            // check to set state (thus conclude transition)
-            if (isNeedToSetDoneContracting && doneExpanding && !doneContracting) {
+            // if in contracting phase, and need to set state
+            if (isAllDoneContracting && doneExpanding && !doneContracting) {
                 doneContracting = true
                 gsm.setState(next)
             }
@@ -128,12 +132,10 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
         }
         else if (type == Type.EXPAND) {
 
-            if (timer < maxTime/2f) {
-                alpha = timer / (maxTime / 2f)
+            if (!doneExpanding) {
                 prev.render(sb)
             }
             else {
-                alpha = 1f - (timer/(maxTime/2f))
                 next.render(sb)
             }
 

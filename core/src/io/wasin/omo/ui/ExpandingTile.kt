@@ -62,6 +62,6 @@ class ExpandingTile(x: Float, y: Float, width: Float, height: Float): SizingTile
     fun setToContract() {
         expanding = false
         contracting = true
-        timer = 0f
+        timer = 0.0f
     }
 }
