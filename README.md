@@ -36,6 +36,11 @@ Interesting points to look at regarding to libgdx
 * Use both `FitViewport` for gameplay content, and `ExtendViewport` for transition effect (whole screen)
 * `Camera.unproject()` that applies screen width, and hieght from specified `Viewport` making resolution independence when check touching position
 
+# Note
+
+If you follow along with the tutorial [videos](https://www.youtube.com/watch?v=oe7_6IoFv_M&list=PL-2t7SM0vDfc7CrI_xElAP0lCIisGpsiB), you can checkout `part1` -> `part8` branch of this repository to have a ready code for end result from each video tutorial.
+All in all, it's optional, and `master` is mostly the one you're looking at. 
+
 # License
 
 [MIT](https://github.com/haxpor/omo/blob/master/LICENSE), Wasin Thonkaew  
