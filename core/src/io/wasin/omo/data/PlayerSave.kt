@@ -1,5 +1,7 @@
 package io.wasin.omo.data
 
+import io.wasin.omo.states.Play
+
 /**
  * Created by haxpor on 6/1/17.
  */
@@ -8,8 +10,6 @@ package io.wasin.omo.data
  * Warning, don't change field name for each data class as it will affect resulting written
  * JSON file at the end.
  *
- * Thus this will have major effect in production environment
  */
 
-data class LevelResult(var clear: Boolean = false, var collectedCrystal: Int = 0)
-data class PlayerSave(var levelResults: Array<LevelResult> = emptyArray())
+data class PlayerSave(var results: HashMap<Play.Difficulty, Int> = hashMapOf())
