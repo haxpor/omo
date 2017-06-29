@@ -6,24 +6,32 @@ import com.badlogic.gdx.math.MathUtils
  * Created by haxpor on 6/28/17.
  */
 class ScoreTextImage(x: Float, y: Float): TextImage("0", x, y) {
-    var score: Int = 0
-    var destScore: Int = 0
+    var score: Float = 0f
+        private set
+    var destScore: Float = 0f
+        private set
+
     var speed: Float = 0.15f    // speed in lerping score to destination score
 
     fun update(dt: Float) {
-        // if not yet reach destination score then update it
-        if (score != destScore) {
-            score += MathUtils.floor(speed * (destScore - score))
+        // if score is still not equal to destScore
+        if (Math.abs(score - destScore) >= 0.0001f) {
+            score += speed * (destScore - score)
         }
 
-        text = score.toString()
+        if (score < 0f) {
+            score = 0f
+        }
+
+        // round first then convert to string for representation
+        text = score.toInt().toString()
     }
 
-    fun addScore(amount: Int) {
+    fun addScore(amount: Float) {
         destScore = score + amount
 
-        if (destScore < 0) {
-            destScore = 0
+        if (destScore < 0f) {
+            destScore = 0f
         }
     }
 }

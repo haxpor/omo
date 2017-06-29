@@ -33,6 +33,9 @@ open class TextImage(text: String, x: Float, y: Float): Box(x, y, 50.0f * text.l
             when (text[i]) {
                 in 'a'..'z' -> cInt = text[i] - 'a'
                 in '0'..'9' -> cInt = text[i] - '0' + 27
+                ' ' -> cInt = 26    // hard-code as per sheet is designed that way
+                '+' -> cInt = 37   // hard-code as per sheet is designed that way, 26 chars + 10 digits + 1 space
+                '-' -> cInt = 38   // hard-code as per sheet is designed that way, 26 chars + 10 digits + 1 space + 1 (+ symbol)
             }
             val row = cInt / fontSheets[0].size
             val col = cInt % fontSheets[0].size
