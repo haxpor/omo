@@ -26,7 +26,8 @@ class Difficulty(gsm: GameStateManager): GameState(gsm) {
         if (Gdx.input.justTouched()) {
             touchPos.x = Gdx.input.x.toFloat()
             touchPos.y = Gdx.input.y.toFloat()
-            cam.unproject(touchPos)
+            cam.unproject(touchPos, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                    hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
             for (i in 0..buttons.size-1) {
                 if (buttons[i].contains(touchPos.x, touchPos.y)) {

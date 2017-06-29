@@ -1,9 +1,11 @@
 package io.wasin.omo.ui
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.MathUtils
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.states.GameState
@@ -41,14 +43,18 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
         }
         else if (type == Type.EXPAND) {
             val size = 80f
-            expands = Array(10, { row -> Array(6,
+            // determine number of tiles (row & col) to fill the screen
+            val numRow = MathUtils.ceil(hudViewport.screenHeight / size)
+            val numCol = MathUtils.ceil(hudViewport.screenWidth / size)
+
+            expands = Array(numRow, { row -> Array(numCol,
                     {
                         col -> ExpandingTile(
                             col * size + size/2,
                             row * size + size/2,
                             size,
                             size).also {
-                                it.timer = (-(10 - row) - col) * delayTimerBetweenTile
+                                it.timer = (-(numRow - row) - col) * delayTimerBetweenTile
                             }
                     })
             })
@@ -124,7 +130,8 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
             sb.setColor(0f, 0f, 0f, alpha)
             sb.projectionMatrix = hudCam.combined
             sb.begin()
-            sb.draw(dark, 0f, 0f, Game.V_WIDTH, Game.V_HEIGHT)
+            // draw dark on the entire screen
+            sb.draw(dark, 0f, 0f, hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
             sb.end()
 
             // set color back to batch

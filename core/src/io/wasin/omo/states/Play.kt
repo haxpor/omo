@@ -89,7 +89,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
             if (!showing && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
                 mouse.y = Gdx.input.getY(i).toFloat()
-                cam.unproject(mouse)
+                cam.unproject(mouse, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                        hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
                 if (mouse.y >= boardOffset && mouse.y <= boardOffset + boardHeight) {
 

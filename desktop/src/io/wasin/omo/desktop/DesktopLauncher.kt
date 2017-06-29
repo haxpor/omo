@@ -7,9 +7,10 @@ import io.wasin.omo.Game
 object DesktopLauncher {
     @JvmStatic fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration()
-        config.width = (Game.V_WIDTH / 2f).toInt()
-        config.height = (Game.V_HEIGHT / 2f).toInt()
+        config.width = (Game.V_WIDTH / 2).toInt()
+        config.height = (Game.V_HEIGHT / 2).toInt()
         config.title = Game.TITLE
+        config.fullscreen = true
         LwjglApplication(Game(), config)
     }
 }
