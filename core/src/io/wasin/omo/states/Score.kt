@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.ui.TextImage
+import io.wasin.omo.ui.TransitionState
 
 /**
  * Created by haxpor on 6/29/17.
@@ -16,7 +17,7 @@ class Score(gsm: GameStateManager, score: Int): GameState(gsm) {
 
     override fun handleInput() {
         if (Gdx.input.justTouched()) {
-            gsm.setState(Mainmenu(gsm))
+            gsm.setState(TransitionState(gsm, this, Mainmenu(gsm), TransitionState.Type.EXPAND))
         }
     }
 

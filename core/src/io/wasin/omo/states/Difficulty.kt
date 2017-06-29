@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.ui.TextImage
+import io.wasin.omo.ui.TransitionState
 
 /**
  * Created by haxpor on 6/28/17.
@@ -29,7 +30,7 @@ class Difficulty(gsm: GameStateManager): GameState(gsm) {
 
             for (i in 0..buttons.size-1) {
                 if (buttons[i].contains(touchPos.x, touchPos.y)) {
-                    gsm.setState(Play(gsm, Play.Difficulty.values()[i]))
+                    gsm.setState(TransitionState(gsm, this, Play(gsm, Play.Difficulty.values()[i]), TransitionState.Type.EXPAND))
                 }
             }
         }

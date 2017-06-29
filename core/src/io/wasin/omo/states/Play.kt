@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
-import io.wasin.omo.ui.Glow
-import io.wasin.omo.ui.ScoreTextImage
-import io.wasin.omo.ui.SizingTile
-import io.wasin.omo.ui.Tile
+import io.wasin.omo.ui.*
 
 /**
  * Created by haxpor on 6/13/17.
@@ -398,6 +395,6 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     }
 
     private fun done() {
-        gsm.setState(Score(gsm, scoreTextImage.score))
+        gsm.setState(TransitionState(gsm, this, Score(gsm, scoreTextImage.score), TransitionState.Type.EXPAND))
     }
 }
