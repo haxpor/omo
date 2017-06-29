@@ -18,6 +18,7 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
     private var touchPos: Vector3 = Vector3.Zero
     private var title: Graphic = Graphic(Game.res.getAtlas("pack")!!.findRegion("omo"), Game.V_WIDTH/2, Game.V_HEIGHT/2 + 100)
     private var play: TextImage = TextImage("play", Game.V_WIDTH/2, Game.V_HEIGHT/2-50)
+    private var highScore: TextImage = TextImage("scores", Game.V_WIDTH/2, Game.V_HEIGHT/2-130)
 
     override fun handleInput() {
         if (Gdx.input.justTouched()) {
@@ -28,6 +29,9 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
 
             if (play.contains(touchPos.x, touchPos.y)) {
                 gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.BLACK_FADE))
+            }
+            else if (highScore.contains(touchPos.x, touchPos.y)) {
+                gsm.setState(TransitionState(gsm, this, HighScore(gsm), TransitionState.Type.BLACK_FADE))
             }
         }
     }
@@ -46,6 +50,7 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         sb.begin()
         title.render(sb)
         play.render(sb)
+        highScore.render(sb)
         sb.end()
     }
 

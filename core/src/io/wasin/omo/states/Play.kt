@@ -19,7 +19,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     companion object {
         const val LEVEL_TIMER: Float = 5.0f
         const val RIGHT_MULTIPLY: Int = 10
-        const val WRONG_ABS_DEDUCT: Int = 5
+        const val WRONG_ABS_DEDUCT: Float = 5f
         const val TIME_WAIT_UNTIL_GOTO_SCORE_STATE: Int = 1
     }
 
@@ -102,7 +102,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                 }
             }
 
-            if (!showing && Gdx.input.isTouched(i)) {
+            if (!showing && !isNeedToWaitBeforeTreatAsDone && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
                 mouse.y = Gdx.input.getY(i).toFloat()
                 hudCam.unproject(mouse, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
@@ -155,13 +155,23 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         if (checkIsFinished()) {
                             level++
 
-                            val addScore = Math.round(scoreTimer * RIGHT_MULTIPLY)
+                            val addScore = scoreTimer * RIGHT_MULTIPLY
                             scoreTextImage.addScore(addScore)
 
                             // check if it's done
                             if (level > maxLevel) {
                                 isNeedToWaitBeforeTreatAsDone = true
                                 doneTimer = 0f
+
+                                // check to save as high score
+                                // note: use destScore as a comparison as score is still updating
+                                game.saveFileManager.getScore(difficulty)?.let {
+                                    if (scoreTextImage.destScore > it) {
+                                        // save to file only if score is beaten
+                                        // need to round first before saving score
+                                        game.saveFileManager.updateScore(difficulty, scoreTextImage.destScore.toInt(), true)
+                                    }
+                                }
                             }
                             else {
                                 val args = getArgs(difficulty)
@@ -434,6 +444,6 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     }
 
     private fun done() {
-        gsm.setState(TransitionState(gsm, this, Score(gsm, scoreTextImage.score), TransitionState.Type.EXPAND))
+        gsm.setState(TransitionState(gsm, this, Score(gsm, scoreTextImage.destScore.toInt()), TransitionState.Type.EXPAND))
     }
 }

@@ -12,4 +12,12 @@ import io.wasin.omo.states.Play
  *
  */
 
-data class PlayerSave(var results: HashMap<Play.Difficulty, Int> = hashMapOf())
+/** you should not deal with class directly
+ * String type for key is actually String value from enum Play.Difficulty.
+ * It will allow underlying system to be able to serialize/deserialize data from JSON file without problem.
+ *
+ * Yes, libgdx can serialize HashMap.
+ * It saves enum as key to JSON file as String, when it goes back from JSON, we need key to be String too not enum.
+ *
+ */
+data class PlayerSave(var results: HashMap<String, Int> = hashMapOf())

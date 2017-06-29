@@ -57,6 +57,7 @@ class PlayerSaveFileManager(filePath: String): ISaveFile {
         Gdx.app.log("PlayerSaveFileManager", "save file content")
         Gdx.app.log("PlayerSaveFileManager", jsonString)
         val playerSave = json.fromJson(PlayerSave::class.java, jsonString)
+
         // syn to internal cache
         cache.data = playerSave
 
@@ -106,7 +107,9 @@ class PlayerSaveFileManager(filePath: String): ISaveFile {
         if (cache.data == null) throw GameRuntimeException("Cache's data should not be null prior to calling this method", GameRuntimeException.NULL_ERROR)
 
         // update to in memory results
-        cache.data!!.results[difficultyLevel] = score
+        cache.data!!.results[difficultyLevel.toString()] = score
+
+        println("updateScore: " + cache.data!!.toString())
 
         if (writeImmediately) {
             // write out cached data
@@ -120,9 +123,9 @@ class PlayerSaveFileManager(filePath: String): ISaveFile {
      */
     fun writeFreshSaveFile() {
         // initialize score to 0 for all difficulty
-        val tmpHashMap = HashMap<Play.Difficulty, Int>(Play.Difficulty.values().size)
+        val tmpHashMap = HashMap<String, Int>(Play.Difficulty.values().size)
         for (dl in Play.Difficulty.values()) {
-            tmpHashMap[dl] = 0
+            tmpHashMap[dl.toString()] = 0
         }
 
         val data = PlayerSave(tmpHashMap)
@@ -139,6 +142,6 @@ class PlayerSaveFileManager(filePath: String): ISaveFile {
     fun getScore(difficulty: Play.Difficulty): Int? {
         if (cache.data == null) return null
 
-        return cache.data!!.results[difficulty]
+        return cache.data!!.results[difficulty.toString()]
     }
 }
