@@ -13,6 +13,7 @@ import io.wasin.omo.ui.TransitionState
  */
 class Score(gsm: GameStateManager, score: Int): GameState(gsm) {
 
+    private var scoreText: TextImage = TextImage("score", Game.V_WIDTH/2, Game.V_HEIGHT/2 + 90)
     private var image: TextImage = TextImage(score.toString(), Game.V_WIDTH/2, Game.V_HEIGHT/2)
 
     override fun handleInput() {
@@ -33,6 +34,7 @@ class Score(gsm: GameStateManager, score: Int): GameState(gsm) {
         hudViewport.apply(true)
 
         sb.begin()
+        scoreText.render(sb)
         image.render(sb)
         sb.end()
     }
