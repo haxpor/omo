@@ -59,21 +59,27 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
     override fun update(dt: Float) {
         timer += dt
 
+        // duration of transition depends on maxTime
         if (type == Type.BLACK_FADE) {
             if (timer >= maxTime) {
                 gsm.setState(next)
             }
         }
+        // duration of transition depends on 2 * effectDuration of ExpandingTile
         else if (type == Type.EXPAND) {
             var isNeedToSetDoneExpanding = false
+            var isNeedToSetDoneContracting = false
             expands.forEach {
                 it.forEach {
                     it.update(dt)
 
                     // check if tile expands to final state
                     // thus we need to start contract
-                    if (it.isDoneExpanding && !isNeedToSetDoneExpanding) {
+                    if (it.isDoneExpanding && !isNeedToSetDoneExpanding && !doneExpanding) {
                         isNeedToSetDoneExpanding = true
+                    }
+                    else if (it.isDoneContracting && !isNeedToSetDoneContracting && !doneContracting) {
+                        isNeedToSetDoneContracting = true
                     }
                 }
             }
@@ -88,7 +94,9 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
                 }
             }
 
-            if (timer >= maxTime) {
+            // check to set state (thus conclude transition)
+            if (isNeedToSetDoneContracting && doneExpanding && !doneContracting) {
+                doneContracting = true
                 gsm.setState(next)
             }
         }

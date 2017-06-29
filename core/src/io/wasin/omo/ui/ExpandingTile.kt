@@ -15,6 +15,8 @@ class ExpandingTile(x: Float, y: Float, width: Float, height: Float): SizingTile
 
     var isDoneExpanding: Boolean = false
         get() = (maxWidth - width < 0.0001f && maxHeight - height < 0.0001f)
+    var isDoneContracting: Boolean = false
+        get() = (width - 0f < 0.0001f && height < 0.0001f)
 
     init {
         maxWidth = width
