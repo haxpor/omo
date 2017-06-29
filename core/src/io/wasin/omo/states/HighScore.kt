@@ -16,12 +16,22 @@ class HighScore(gsm: GameStateManager): GameState(gsm) {
 
     private var touchPos: Vector3 = Vector3.Zero
     private var diffTitles: Array<TextImage>
+    private var scores: Array<TextImage>
     private var backButton: TextImage
 
     init {
-        val texts = arrayOf("easy", "normal", "hard", "insane")
-        diffTitles = Array(texts.size, { i -> TextImage(texts[i], Game.V_WIDTH/2, Game.V_HEIGHT/2 + 100 - 70*i) })
-        backButton = TextImage("back", Game.V_WIDTH/2, 70f)
+        val texts = arrayOf("-  easy  -", "- normal -", "-  hard  -", "- insane -")
+        diffTitles = Array(texts.size, { i -> TextImage(texts[i], Game.V_WIDTH/2, Game.V_HEIGHT - 100f - 70f*i*2f - i*10) })
+        backButton = TextImage("back", Game.V_WIDTH/2f, 70f)
+
+        scores = Array(texts.size,
+                { i ->
+                    val score = game.saveFileManager.getScore(Play.Difficulty.values()[i])
+                   if (score == null)
+                       TextImage("0", Game.V_WIDTH/2f, Game.V_HEIGHT - 100f - 70f*i*2f - i*13 - 70f)
+                   else
+                       TextImage(score!!.toString(), Game.V_WIDTH/2, Game.V_HEIGHT - 100f - 70f*i*2f - i*13 -70f)
+                })
     }
 
     override fun handleInput() {
@@ -38,6 +48,7 @@ class HighScore(gsm: GameStateManager): GameState(gsm) {
                 }
             }
 
+            // back button
             if (backButton.contains(touchPos.x, touchPos.y)) {
                 gsm.setState(TransitionState(gsm, this, Mainmenu(gsm), TransitionState.Type.EXPAND))
             }
@@ -58,6 +69,9 @@ class HighScore(gsm: GameStateManager): GameState(gsm) {
         sb.begin()
         for (b in diffTitles) {
             b.render(sb)
+        }
+        for (s in scores) {
+            s.render(sb)
         }
         backButton.render(sb)
         sb.end()
