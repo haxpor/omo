@@ -13,6 +13,10 @@ Following is changes from original project
     * `SizingTile` for use as normal tile in gameplay session
     * `GlowTile` for use as tile effect when touch on tile to select it, it includes ability to set type of do contracting effect as well
     * `ExpandingTile` for use as transitioning effect when switch between one game state to another
+* Flexible touch to select/deselect tiles via dragging. Support up to 2 fingers at the same time
+* Save save to save highscore for each difficulty
+* Added support for rendering space, + (plus), and - (minus) symbol from spritesheet
+* Safer using of score to save as highscore (if beaten), and supply in Score screen
     
 # Kotlin notices
 
