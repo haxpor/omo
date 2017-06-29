@@ -26,7 +26,7 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
             hudCam.unproject(touchPos)
 
             if (play.contains(touchPos.x, touchPos.y)) {
-                gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.BLACK_FADE))
+                gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.EXPAND))
             }
         }
     }
