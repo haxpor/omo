@@ -1,5 +1,5 @@
 # OMO
-Kotlin port with changes and improvements for omo originally by ForeignGuyMike
+Kotlin port with changes and improvements for omo originally by ForeignGuyMike, on PC, Android and iOS (via MOE).
 
 # Changes
 
