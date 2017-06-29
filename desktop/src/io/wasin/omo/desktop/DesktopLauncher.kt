@@ -7,8 +7,8 @@ import io.wasin.omo.Game
 object DesktopLauncher {
     @JvmStatic fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration()
-        config.width = (Game.V_WIDTH / 2).toInt()
-        config.height = (Game.V_HEIGHT / 2).toInt()
+        config.width = (Game.V_WIDTH).toInt()
+        config.height = (Game.V_HEIGHT).toInt()
         config.title = Game.TITLE
         LwjglApplication(Game(), config)
     }

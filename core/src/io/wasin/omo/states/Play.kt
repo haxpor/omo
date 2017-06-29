@@ -63,9 +63,13 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     private var isNeedToWaitBeforeTreatAsDone: Boolean = false
     private var doneTimer: Float = 0.0f
 
+    // back button
+    private var backButton: TextImage
+
     init {
 
         scoreTextImage = ScoreTextImage(Game.V_WIDTH/2, Game.V_HEIGHT - 70)
+        backButton = TextImage("back", Game.V_WIDTH/2, 70f)
 
         val texture = Game.res.getAtlas("pack")!!
         light = texture.findRegion("light")
@@ -85,6 +89,18 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     override fun handleInput() {
         for (i in 0..MultiTouch.MAX_FINGERS-1) {
+
+            // back button
+            if (Gdx.input.isTouched(i)) {
+                mouse.x = Gdx.input.getX(i).toFloat()
+                mouse.y = Gdx.input.getY(i).toFloat()
+                hudCam.unproject(mouse, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                        hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
+
+                if (backButton.contains(mouse.x, mouse.y)) {
+                    gsm.setState(TransitionState(gsm, this, io.wasin.omo.states.Difficulty(gsm), TransitionState.Type.EXPAND))
+                }
+            }
 
             if (!showing && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
@@ -231,6 +247,9 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                 tiles[row][col].render(sb)
             }
         }
+
+        // render back button
+        backButton.render(sb)
 
         // render glow
         for (g in glows) {
