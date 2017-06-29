@@ -1,5 +1,6 @@
 package io.wasin.omo.handlers
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import io.wasin.omo.Game
 import io.wasin.omo.states.*
 
@@ -28,8 +29,8 @@ class GameStateManager(game: Game){
         this.gameStates.peek().resize(width, height)
     }
 
-    fun render() {
-        this.gameStates.peek().render()
+    fun render(sb: SpriteBatch) {
+        this.gameStates.peek().render(sb)
     }
 
     fun setState(gameState: GameState) {

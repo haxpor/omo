@@ -2,11 +2,13 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector3
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.*
 import io.wasin.omo.ui.Graphic
 import io.wasin.omo.ui.TextImage
+import io.wasin.omo.ui.TransitionState
 
 /**
  * Created by haxpor on 5/30/17.
@@ -21,10 +23,11 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         if (Gdx.input.justTouched()) {
             touchPos.x = Gdx.input.x.toFloat()
             touchPos.y = Gdx.input.y.toFloat()
-            hudCam.unproject(touchPos)
+            hudCam.unproject(touchPos, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                    hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
             if (play.contains(touchPos.x, touchPos.y)) {
-                gsm.setState(Difficulty(gsm))
+                gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.BLACK_FADE))
             }
         }
     }
@@ -33,11 +36,13 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         handleInput()
     }
 
-    override fun render() {
+    override fun render(sb: SpriteBatch) {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         sb.projectionMatrix = hudCam.combined
+        hudViewport.apply(true)
+
         sb.begin()
         title.render(sb)
         play.render(sb)

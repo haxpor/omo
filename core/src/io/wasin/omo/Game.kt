@@ -40,7 +40,7 @@ class Game : ApplicationAdapter() {
 	override fun render() {
 		Gdx.graphics.setTitle(TITLE + " -- FPS: " + Gdx.graphics.framesPerSecond)
 		gsm.update(Gdx.graphics.deltaTime)
-		gsm.render()
+		gsm.render(sb)
 		BBInput.update()
 	}
 

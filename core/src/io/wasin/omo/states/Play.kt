@@ -2,13 +2,14 @@ package io.wasin.omo.states
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
-import io.wasin.omo.ui.ScoreTextImage
-import io.wasin.omo.ui.Tile
+import io.wasin.omo.ui.*
 
 /**
  * Created by haxpor on 6/13/17.
@@ -17,6 +18,9 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     companion object {
         const val LEVEL_TIMER: Float = 5.0f
+        const val RIGHT_MULTIPLY: Int = 10
+        const val WRONG_ABS_DEDUCT: Int = 5
+        const val TIME_WAIT_UNTIL_GOTO_SCORE_STATE: Int = 1
     }
 
     object MultiTouch {
@@ -37,7 +41,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     private var maxLevel: Int = 3
     private var difficulty: Difficulty = difficulty
 
-    private var tiles: ArrayList<ArrayList<Tile>> = arrayListOf()
+    private var tiles: ArrayList<ArrayList<SizingTile>> = arrayListOf()
     private var tileSize: Float = -1f
     private var boardOffset: Float = -1f
     private var boardHeight: Float = -1f
@@ -45,19 +49,32 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var selected: Array<Tile>
     private var finished: Array<Tile>
+    private var glows: Array<Glow>
 
     private var showing: Boolean = true
     private var showTimer: Float = 0.0f
 
     private var prevPosTouched: kotlin.Array<Pair<Int, Int>> = kotlin.Array(MultiTouch.MAX_FINGERS, { _ -> Pair(-1, -1)})
 
+    private var light: TextureRegion
+    private var dark: TextureRegion
+
+    // handle to wait after game is done then go to score state
+    private var isNeedToWaitBeforeTreatAsDone: Boolean = false
+    private var doneTimer: Float = 0.0f
+
     init {
 
         scoreTextImage = ScoreTextImage(Game.V_WIDTH/2, Game.V_HEIGHT - 70)
 
+        val texture = Game.res.getAtlas("pack")!!
+        light = texture.findRegion("light")
+        dark = texture.findRegion("dark")
+
         // initially create empty array for selected, and finished first
         selected = Array()
         finished = Array()
+        glows = Array()
 
         val args = getArgs(difficulty)
 
@@ -72,7 +89,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
             if (!showing && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
                 mouse.y = Gdx.input.getY(i).toFloat()
-                cam.unproject(mouse)
+                hudCam.unproject(mouse, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                        hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
                 if (mouse.y >= boardOffset && mouse.y <= boardOffset + boardHeight) {
 
@@ -81,8 +99,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
                     if (row >= 0 && row < tiles.count() &&
                             col >= 0 && col < tiles[row].count() &&
-                            row != prevPosTouched[i].first ||
-                            col != prevPosTouched[i].second) {
+                            (row != prevPosTouched[i].first ||
+                            col != prevPosTouched[i].second)) {
 
                         val tile = tiles[row][col]
                         tile.selected = !tile.selected
@@ -90,29 +108,52 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         // add to selected array if it's highlighted
                         if (tile.selected) {
                             selected.add(tile)
+
+                            // check if this selected tile is wrong
+                            if (!finished.contains(tile)) {
+                                tile.wrong = true
+
+                                // apply penalty
+                                scoreTextImage.addScore(-WRONG_ABS_DEDUCT)
+                            }
+                            else {
+                                tile.wrong = false
+                            }
+
+                            // add glow (grow type) effect
+                            glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
                         }
                         // removed from selected array if it's deselected
                         else {
                             selected.removeValue(tile, true)
+
+                            // add glow (shrink type) effect
+                            val glow = Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, Glow.Type.SHRINK)
+                            if (tile.wrong) {
+                                glow.wrong = true
+                            }
+                            glows.add(glow)
                         }
 
                         // if finished then restart the board again
                         if (checkIsFinished()) {
                             level++
 
-                            val addScore = Math.round(scoreTimer * 10f)
+                            val addScore = Math.round(scoreTimer * RIGHT_MULTIPLY)
                             scoreTextImage.addScore(addScore)
-
-                            val args = getArgs(difficulty)
-                            createBoard(args[0], args[1])
-                            createFinished(args[2])
-
-                            // reset scoreTextImage timer
-                            scoreTimer = LEVEL_TIMER
 
                             // check if it's done
                             if (level > maxLevel) {
-                                done()
+                                isNeedToWaitBeforeTreatAsDone = true
+                                doneTimer = 0f
+                            }
+                            else {
+                                val args = getArgs(difficulty)
+                                createBoard(args[0], args[1])
+                                createFinished(args[2])
+
+                                // reset scoreTextImage timer
+                                scoreTimer = LEVEL_TIMER
                             }
                         }
                     }
@@ -134,26 +175,66 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         checkToShowObjective(dt)
         checkToCountdownScoreTimer(dt)
 
+        // update glows
+        for (i in glows.count()-1 downTo 0) {
+            glows[i].update(dt)
+
+            if (glows[i].shouldBeRemoved) {
+                glows.removeIndex(i)
+            }
+        }
+
+        scoreTextImage.update(dt)
+
         // tiles
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].update(dt)
             }
         }
+
+        if (isNeedToWaitBeforeTreatAsDone) {
+            doneTimer += dt
+
+            if (doneTimer >= TIME_WAIT_UNTIL_GOTO_SCORE_STATE) {
+                // switch to another state thus no need to check whether code enter inside this statement again
+                done()
+            }
+        }
     }
 
-    override fun render() {
+    override fun render(sb: SpriteBatch) {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        sb.projectionMatrix = cam.combined
+        sb.projectionMatrix = hudCam.combined
+        hudViewport.apply(true)
         sb.begin()
 
+        // render score
         scoreTextImage.render(sb)
+
+        // render level indicator
+        val allLevelsWidth = (2*maxLevel - 1)*10
+        for (i in 0..maxLevel-1) {
+            if (i+1 <= level) {
+                sb.draw(light, Game.V_WIDTH/2 - allLevelsWidth/2 + 20*i, Game.V_HEIGHT - 125, 10f, 10f)
+            }
+            else {
+                sb.draw(dark, Game.V_WIDTH/2 - allLevelsWidth/2 + 20*i, Game.V_HEIGHT - 125, 10f, 10f)
+            }
+        }
+
+        // render tiles
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].render(sb)
             }
+        }
+
+        // render glow
+        for (g in glows) {
+            g.render(sb)
         }
 
         sb.end()
@@ -214,14 +295,14 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
             for (col in 0..numCol-1) {
                 tiles[row].add(col,
-                        Tile(
+                        SizingTile(
                                 col * tileSize + tileSize/2,
                                 row * tileSize + boardOffset + tileSize/2,
                                 tileSize,
                                 tileSize
                         )
                 )
-                tiles[row][col].setTimer(-((numRow - row) * 0.02f) - col * 0.05f)
+                tiles[row][col].timer = -((numRow - row) * 0.02f) - col * 0.05f
             }
         }
     }
@@ -334,6 +415,6 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     }
 
     private fun done() {
-        gsm.setState(Score(gsm, scoreTextImage.score))
+        gsm.setState(TransitionState(gsm, this, Score(gsm, scoreTextImage.score), TransitionState.Type.EXPAND))
     }
 }
