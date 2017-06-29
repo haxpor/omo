@@ -176,6 +176,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
             }
         }
 
+        scoreTextImage.update(dt)
+
         // tiles
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
