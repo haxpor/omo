@@ -89,7 +89,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
             if (!showing && Gdx.input.isTouched(i)) {
                 mouse.x = Gdx.input.getX(i).toFloat()
                 mouse.y = Gdx.input.getY(i).toFloat()
-                cam.unproject(mouse)
+                hudCam.unproject(mouse, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                        hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
                 if (mouse.y >= boardOffset && mouse.y <= boardOffset + boardHeight) {
 
@@ -206,7 +207,8 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        sb.projectionMatrix = cam.combined
+        sb.projectionMatrix = hudCam.combined
+        hudViewport.apply(true)
         sb.begin()
 
         // render score

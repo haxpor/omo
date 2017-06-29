@@ -26,8 +26,8 @@ abstract class GameState(gsm: GameStateManager) {
         setupCamera(Game.V_WIDTH, Game.V_HEIGHT)
         setupViewport(cam, hudCam, Game.V_WIDTH, Game.V_HEIGHT)
         // always update viewport
-        camViewport.update(Gdx.app.graphics.width, Gdx.app.graphics.height)
-        hudViewport.update(Gdx.app.graphics.width, Gdx.app.graphics.height, true)
+        camViewport.update(Gdx.graphics.width, Gdx.graphics.height)
+        hudViewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
     }
 
     abstract fun handleInput()

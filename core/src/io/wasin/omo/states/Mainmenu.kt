@@ -23,7 +23,8 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         if (Gdx.input.justTouched()) {
             touchPos.x = Gdx.input.x.toFloat()
             touchPos.y = Gdx.input.y.toFloat()
-            hudCam.unproject(touchPos)
+            hudCam.unproject(touchPos, hudViewport.screenX.toFloat(), hudViewport.screenY.toFloat(),
+                    hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
             if (play.contains(touchPos.x, touchPos.y)) {
                 gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.BLACK_FADE))
@@ -40,6 +41,8 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         sb.projectionMatrix = hudCam.combined
+        hudViewport.apply(true)
+
         sb.begin()
         title.render(sb)
         play.render(sb)

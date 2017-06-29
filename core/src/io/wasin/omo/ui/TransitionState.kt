@@ -1,9 +1,13 @@
 package io.wasin.omo.ui
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import io.wasin.omo.Game
 import io.wasin.omo.handlers.GameStateManager
 import io.wasin.omo.states.GameState
@@ -17,6 +21,11 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
         BLACK_FADE,
         EXPAND
     }
+
+    // as we need to fill transitining effect to the whole screen
+    // thus we use ExtendViewport with its camera to handle this
+    private var transitionCam: OrthographicCamera
+    private var transitionViewport: ExtendViewport
 
     private var prev: GameState = prev
     private var next: GameState = next
@@ -36,19 +45,30 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
     private var delayTimerBetweenTile: Float = 0.025f
 
     init {
+
+        transitionCam = OrthographicCamera()
+        transitionCam.setToOrtho(false, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+
+        transitionViewport = ExtendViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), transitionCam)
+        transitionViewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
+
         if (type == Type.BLACK_FADE) {
             maxTime = 1f
         }
         else if (type == Type.EXPAND) {
             val size = 80f
-            expands = Array(10, { row -> Array(6,
+            // determine number of tiles (row & col) to fill the screen
+            val numRow = MathUtils.ceil(transitionViewport.screenHeight / size)
+            val numCol = MathUtils.ceil(transitionViewport.screenWidth / size)
+
+            expands = Array(numRow, { row -> Array(numCol,
                     {
                         col -> ExpandingTile(
                             col * size + size/2,
                             row * size + size/2,
                             size,
                             size).also {
-                                it.timer = (-(10 - row) - col) * delayTimerBetweenTile
+                                it.timer = (-(numRow - row) - col) * delayTimerBetweenTile
                             }
                     })
             })
@@ -122,9 +142,11 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
             val color = sb.color
 
             sb.setColor(0f, 0f, 0f, alpha)
-            sb.projectionMatrix = hudCam.combined
+            sb.projectionMatrix = transitionCam.combined
+            transitionViewport.apply(true)
             sb.begin()
-            sb.draw(dark, 0f, 0f, Game.V_WIDTH, Game.V_HEIGHT)
+            // draw dark on the entire screen
+            sb.draw(dark, 0f, 0f, transitionViewport.screenWidth.toFloat(), transitionViewport.screenHeight.toFloat())
             sb.end()
 
             // set color back to batch
@@ -139,7 +161,8 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
                 next.render(sb)
             }
 
-            sb.projectionMatrix = hudCam.combined
+            sb.projectionMatrix = transitionCam.combined
+            transitionViewport.apply(true)
             sb.begin()
             expands.forEach { it.forEach { it.render(sb) } }
             sb.end()
@@ -147,7 +170,7 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
     }
 
     override fun resize_user(width: Int, height: Int) {
-
+        transitionViewport.update(width, height, true)
     }
 
     override fun dispose() {
