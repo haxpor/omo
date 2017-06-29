@@ -40,11 +40,15 @@ class TransitionState(gsm: GameStateManager, prev: GameState, next: GameState, t
         }
         else if (type == Type.EXPAND) {
             val size = 80f
-            expands = Array(10, { row -> Array(6, {col -> ExpandingTile(
-                    col * size + size/2,
-                    row * size + size/2,
-                    size,
-                    size)}) })
+            expands = Array(10, { row -> Array(6,
+                    {
+                        col -> ExpandingTile(
+                            col * size + size/2,
+                            row * size + size/2,
+                            size,
+                            size)
+                    })
+            })
         }
     }
 
