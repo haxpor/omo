@@ -20,6 +20,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         const val LEVEL_TIMER: Float = 5.0f
         const val RIGHT_MULTIPLY: Int = 10
         const val WRONG_ABS_DEDUCT: Int = 5
+        const val TIME_WAIT_UNTIL_GOTO_SCORE_STATE: Int = 1
     }
 
     object MultiTouch {
@@ -57,6 +58,10 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var light: TextureRegion
     private var dark: TextureRegion
+
+    // handle to wait after game is done then go to score state
+    private var isNeedToWaitBeforeTreatAsDone: Boolean = false
+    private var doneTimer: Float = 0.0f
 
     init {
 
@@ -136,16 +141,18 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                             val addScore = Math.round(scoreTimer * RIGHT_MULTIPLY)
                             scoreTextImage.addScore(addScore)
 
-                            val args = getArgs(difficulty)
-                            createBoard(args[0], args[1])
-                            createFinished(args[2])
-
-                            // reset scoreTextImage timer
-                            scoreTimer = LEVEL_TIMER
-
                             // check if it's done
                             if (level > maxLevel) {
-                                done()
+                                isNeedToWaitBeforeTreatAsDone = true
+                                doneTimer = 0f
+                            }
+                            else {
+                                val args = getArgs(difficulty)
+                                createBoard(args[0], args[1])
+                                createFinished(args[2])
+
+                                // reset scoreTextImage timer
+                                scoreTimer = LEVEL_TIMER
                             }
                         }
                     }
@@ -182,6 +189,15 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
         for (row in 0..tiles.count()-1) {
             for (col in 0..tiles[row].count()-1) {
                 tiles[row][col].update(dt)
+            }
+        }
+
+        if (isNeedToWaitBeforeTreatAsDone) {
+            doneTimer += dt
+
+            if (doneTimer >= TIME_WAIT_UNTIL_GOTO_SCORE_STATE) {
+                // switch to another state thus no need to check whether code enter inside this statement again
+                done()
             }
         }
     }
