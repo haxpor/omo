@@ -49,7 +49,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var selected: Array<Tile>
     private var finished: Array<Tile>
-    private var glows: Array<Glow>
+    private var glows: Array<GlowTile>
 
     private var showing: Boolean = true
     private var showTimer: Float = 0.0f
@@ -121,14 +121,14 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                             }
 
                             // add glow (grow type) effect
-                            glows.add(Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
+                            glows.add(GlowTile(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize))
                         }
                         // removed from selected array if it's deselected
                         else {
                             selected.removeValue(tile, true)
 
                             // add glow (shrink type) effect
-                            val glow = Glow(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, Glow.Type.SHRINK)
+                            val glow = GlowTile(tiles[row][col].x, tiles[row][col].y, tileSize, tileSize, GlowTile.Type.SHRINK)
                             if (tile.wrong) {
                                 glow.wrong = true
                             }
