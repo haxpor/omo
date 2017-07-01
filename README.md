@@ -47,3 +47,5 @@ All in all, it's optional, and `master` is mostly the one you're looking at.
 You should not just use code in this project, and make a copy of game to publish. Please note that ForeignGuyMike published his original idea (OMO) to [Google Play](https://play.google.com/store/apps/details?id=com.distraction.omo.android&pageId=105950263560359459987).
 
 You can use the code, adapt it into your own project, or modify the game further with different game design etc so it's not complete rip-off, then you are clear to publish the game.
+
+<a href="https://github.com/haxpor/donate"><img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat" alt="donate"></a>
