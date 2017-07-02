@@ -3,11 +3,11 @@ Kotlin port with changes and improvements for omo originally by ForeignGuyMike, 
 
 # What It Looks Like
 
+## High scores feature has been added
 ![OMO gif 1](http://i.imgur.com/SFOCSd8.gif)
-_Saved high scores has been added to the project_
 
+## Smooth and Flexible drag-touch to select & deselect tiles
 ![OMO gif 2](http://i.imgur.com/tNGjvtV.gif)
-_Smooth and flexible drag-touch to select and deselect tiles_
 
 # Changes
 
