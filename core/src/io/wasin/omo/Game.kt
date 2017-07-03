@@ -37,6 +37,14 @@ class Game : ApplicationAdapter() {
 
         // load resource
 		res.loadAtlas("pack.pack", "pack")
+        res.loadSound("sound/correct.wav", "correct")
+        res.loadSound("sound/wrong.wav", "wrong")
+        res.loadSound("sound/tap.wav", "tap")
+        res.loadSound("sound/timeup.wav", "timeup")
+        res.loadSound("sound/one-sec-warning.wav", "onesec")
+        res.loadSound("sound/cancel.wav", "cancel")
+        res.loadSound("sound/win.wav", "win")
+		res.loadMusic("sound/bg.wav", "bg")
 
         // read player's savefile
         // this will read it into cache, thus it will be maintained and used throughout the life cycle of the game
@@ -57,6 +65,13 @@ class Game : ApplicationAdapter() {
             Gdx.app.log("Game", "save file is corrupted, rewrite a fresh one : ${e.message}")
 
             saveFileManager.writeFreshSaveFile()
+        }
+
+        // set to play bg music endlessly now
+        res.getMusic("bg")?.let {
+            it.play()
+            it.volume = 0.4f
+            it.isLooping = true
         }
 
 		// begin with Easy difficulty of Play state
