@@ -17,6 +17,7 @@ import io.wasin.omo.ui.*
 class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     companion object {
+        const val SHOW_TIMER: Float = 4.0f
         const val LEVEL_TIMER: Float = 5.0f
         const val RIGHT_MULTIPLY: Int = 10
         const val WRONG_ABS_DEDUCT: Float = 5f
@@ -36,6 +37,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var scoreTextImage: ScoreTextImage
     private var scoreTimer: Float = LEVEL_TIMER
+    private var isPlayedTimeupSfx: Boolean = false
 
     private var level: Int = 1
     private var maxLevel: Int = 3
@@ -53,6 +55,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
     private var showing: Boolean = true
     private var showTimer: Float = 0.0f
+    private var showPreviousOneSecAwayTime: Float = 0.0f
 
     private var prevPosTouched: kotlin.Array<Pair<Int, Int>> = kotlin.Array(MultiTouch.MAX_FINGERS, { _ -> Pair(-1, -1)})
 
@@ -98,6 +101,10 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
                 if (backButton.contains(mouse.x, mouse.y)) {
+                    Game.res.getSound("tap")?.let {
+                        val sfx = it
+                        sfx.play().let { sfx.setVolume(it, 0.7f)}
+                    }
                     gsm.setState(TransitionState(gsm, this, io.wasin.omo.states.Difficulty(gsm), TransitionState.Type.EXPAND))
                 }
             }
@@ -127,12 +134,20 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
                             // check if this selected tile is wrong
                             if (!finished.contains(tile)) {
+                                Game.res.getSound("wrong")?.let {
+                                    val sfx = it
+                                    sfx.play().let { sfx.setVolume(it, 0.45f) }
+                                }
                                 tile.wrong = true
 
                                 // apply penalty
                                 scoreTextImage.addScore(-WRONG_ABS_DEDUCT)
                             }
                             else {
+                                Game.res.getSound("correct")?.let {
+                                    val sfx = it
+                                    sfx.play().let { sfx.setVolume(it, 0.45f) }
+                                }
                                 tile.wrong = false
                             }
 
@@ -141,6 +156,11 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                         }
                         // removed from selected array if it's deselected
                         else {
+                            Game.res.getSound("cancel")?.let {
+                                val sfx = it
+                                sfx.play().let { sfx.setVolume(it, 0.45f) }
+                            }
+
                             selected.removeValue(tile, true)
 
                             // add glow (shrink type) effect
@@ -153,6 +173,11 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
                         // if finished then restart the board again
                         if (checkIsFinished()) {
+                            Game.res.getSound("win")?.let {
+                                val sfx = it
+                                sfx.play().let { sfx.setVolume(it, 0.6f) }
+                            }
+
                             level++
 
                             val addScore = scoreTimer * RIGHT_MULTIPLY
@@ -280,6 +305,16 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
     private fun checkToCountdownScoreTimer(dt: Float) {
         if (!showing) {
             scoreTimer -= dt
+
+            // play timeup sfx
+            if (scoreTimer <= 0.0f && !isPlayedTimeupSfx) {
+                Game.res.getSound("timeup")?.let {
+                    val sfx = it
+                    sfx.play().let { sfx.setVolume(it, 0.5f)}
+                }
+
+                isPlayedTimeupSfx = true
+            }
         }
     }
 
@@ -292,6 +327,10 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                     for (f in finished) {
                         f.selected = true
                     }
+                    Game.res.getSound("onesec")?.let {
+                        val sfx = it
+                        sfx.play().let { sfx.setVolume(it, 0.65f)}
+                    }
                 }
                 else {
                     for (f in finished) {
@@ -300,7 +339,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
                 }
             }
 
-            if (showTimer > 4f) {
+            if (showTimer > SHOW_TIMER) {
                 showing = false
 
                 // go through everything and unselected each tile
@@ -343,6 +382,7 @@ class Play(gsm: GameStateManager, difficulty: Difficulty): GameState(gsm) {
 
         showing = true
         showTimer = 0f
+        isPlayedTimeupSfx = false
 
         for (i in 0..numTilesToLight-1) {
 

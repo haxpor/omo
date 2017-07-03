@@ -28,9 +28,18 @@ class Mainmenu(gsm: GameStateManager): GameState(gsm) {
                     hudViewport.screenWidth.toFloat(), hudViewport.screenHeight.toFloat())
 
             if (play.contains(touchPos.x, touchPos.y)) {
+                Game.res.getSound("tap")?.let {
+                    val sfx = it
+                    sfx.play().let { sfx.setVolume(it, 0.7f)}
+                }
+
                 gsm.setState(TransitionState(gsm, this, Difficulty(gsm), TransitionState.Type.BLACK_FADE))
             }
             else if (highScore.contains(touchPos.x, touchPos.y)) {
+                Game.res.getSound("tap")?.let {
+                    val sfx = it
+                    sfx.play().let { sfx.setVolume(it, 0.7f)}
+                }
                 gsm.setState(TransitionState(gsm, this, HighScore(gsm), TransitionState.Type.BLACK_FADE))
             }
         }

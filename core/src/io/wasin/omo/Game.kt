@@ -37,6 +37,13 @@ class Game : ApplicationAdapter() {
 
         // load resource
 		res.loadAtlas("pack.pack", "pack")
+        res.loadSound("sound/correct.wav", "correct")
+        res.loadSound("sound/wrong.wav", "wrong")
+        res.loadSound("sound/tap.wav", "tap")
+        res.loadSound("sound/timeup.wav", "timeup")
+        res.loadSound("sound/one-sec-warning.wav", "onesec")
+        res.loadSound("sound/cancel.wav", "cancel")
+        res.loadSound("sound/win.wav", "win")
 		res.loadMusic("sound/bg.wav", "bg")
 
         // read player's savefile
@@ -63,7 +70,7 @@ class Game : ApplicationAdapter() {
         // set to play bg music endlessly now
         res.getMusic("bg")?.let {
             it.play()
-            it.volume = 0.2f
+            it.volume = 0.4f
             it.isLooping = true
         }
 

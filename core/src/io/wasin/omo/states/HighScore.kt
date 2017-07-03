@@ -44,12 +44,20 @@ class HighScore(gsm: GameStateManager): GameState(gsm) {
             // all difficulty buttons
             for (i in 0..diffTitles.size-1) {
                 if (diffTitles[i].contains(touchPos.x, touchPos.y)) {
+                    Game.res.getSound("tap")?.let {
+                        val sfx = it
+                        sfx.play().let { sfx.setVolume(it, 0.7f)}
+                    }
                     gsm.setState(TransitionState(gsm, this, Play(gsm, Play.Difficulty.values()[i]), TransitionState.Type.EXPAND))
                 }
             }
 
             // back button
             if (backButton.contains(touchPos.x, touchPos.y)) {
+                Game.res.getSound("tap")?.let {
+                    val sfx = it
+                    sfx.play().let { sfx.setVolume(it, 0.7f)}
+                }
                 gsm.setState(TransitionState(gsm, this, Mainmenu(gsm), TransitionState.Type.EXPAND))
             }
         }

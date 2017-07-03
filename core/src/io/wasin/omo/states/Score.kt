@@ -18,6 +18,10 @@ class Score(gsm: GameStateManager, score: Int): GameState(gsm) {
 
     override fun handleInput() {
         if (Gdx.input.justTouched()) {
+            Game.res.getSound("tap")?.let {
+                val sfx = it
+                sfx.play().let { sfx.setVolume(it, 0.7f)}
+            }
             gsm.setState(TransitionState(gsm, this, Mainmenu(gsm), TransitionState.Type.EXPAND))
         }
     }
