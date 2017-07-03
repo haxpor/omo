@@ -36,6 +36,7 @@ Interesting points to look at regarding Kotlin language features used in the pro
 * 2 dimensional array declaration i.e. `Array<Array<ExpandingTile>>`
 * `open class` to allow other classes to extend it i.e `Tile` class
 * Customized getter function for class's properties that not just return its backing field but involves condition checking to return `Boolean`
+* Use `let { }` to play music and sfxs across the project in which it sets volume at the same time. Intend to not have a separate class to handle playing sounds.
 
 # libgdx notices
 
