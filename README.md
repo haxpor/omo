@@ -25,6 +25,7 @@ Following is changes from original project
 * Save save to save highscore for each difficulty
 * Added support for rendering space, + (plus), and - (minus) symbol from spritesheet
 * Safer using of score to save as highscore (if beaten), and supply in Score screen
+* Background music, and sfx across the game
     
 # Kotlin notices
 
@@ -44,6 +45,11 @@ Interesting points to look at regarding to libgdx
 * Use both `FitViewport` for gameplay content, and `ExtendViewport` for transition effect (whole screen)
 * `Camera.unproject()` that applies screen width, and hieght from specified `Viewport` making resolution independence when check touching position
 
+# Music
+
+I made background music using MilkyTracker, you can give me support and download it on [Bandcamp](https://haxpor.bandcamp.com/track/8-bit-concerto).
+For all sfx, I use bfxr to create them.
+
 # Note
 
 If you follow along with the tutorial [videos](https://www.youtube.com/watch?v=oe7_6IoFv_M&list=PL-2t7SM0vDfc7CrI_xElAP0lCIisGpsiB), you can checkout `part1` -> `part8` branch of this repository to have a ready code for end result from each video tutorial.
@@ -57,3 +63,5 @@ You should not just use code in this project, and make a copy of game to publish
 You can use the code, adapt it into your own project, or modify the game further with different game design etc so it's not complete rip-off, then you are clear to publish the game.
 
 <a href="https://github.com/haxpor/donate"><img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat" alt="donate"></a>
+
+For background music, it's under [CC Attibution 3.0](https://creativecommons.org/licenses/by/3.0/). That means you are free to use, modify or further use in personal or commercial project but giving credits back to me is required.
