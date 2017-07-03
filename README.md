@@ -9,6 +9,9 @@ Kotlin port with changes and improvements for omo originally by ForeignGuyMike, 
 ## Smooth and Flexible drag-touch to select & deselect tiles
 ![OMO gif 2](http://i.imgur.com/6BKekag.gif)
 
+## Gameplay
+[![OMO youtube](http://i.imgur.com/lNR7CP1.png)](https://www.youtube.com/watch?v=yu9YYIxXgmU)
+
 # Changes
 
 Following is changes from original project
