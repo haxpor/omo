@@ -62,6 +62,6 @@ You should not just use code in this project, and make a copy of game to publish
 
 You can use the code, adapt it into your own project, or modify the game further with different game design etc so it's not complete rip-off, then you are clear to publish the game.
 
-For background music, it's under [CC Attibution 3.0](https://creativecommons.org/licenses/by/3.0/). That means you are free to use, modify or further use in personal or commercial project but giving credits back to me is required.
+For background music, it's under [CC Attibution 3.0](https://creativecommons.org/licenses/by/3.0/). That means you are free to use, modify or further use in personal or commercial project but giving credits back to me is required. Anyway for sfxs are free to use in anyway you want.
 
 <a href="https://github.com/haxpor/donate"><img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat" alt="donate"></a>
