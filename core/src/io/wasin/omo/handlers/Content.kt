@@ -5,11 +5,12 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.Disposable
 
 /**
  * Created by haxpor on 5/17/17.
  */
-class Content {
+class Content: Disposable {
 
     private var textures: HashMap<String, Texture> = HashMap()
     private var textureAtlases: HashMap<String, TextureAtlas> = HashMap()
@@ -41,6 +42,14 @@ class Content {
 
     fun getAtlas(key: String): TextureAtlas? {
         return textureAtlases[key]
+    }
+
+    fun removeAtlas(key: String) {
+        val atlas = textureAtlases.get(key)
+        if (atlas != null) {
+            textureAtlases.remove(key)
+            atlas.dispose()
+        }
     }
 
     // ** Sounds ** //
@@ -77,5 +86,13 @@ class Content {
             musics.remove(key)
             m.dispose()
         }
+    }
+
+    override fun dispose() {
+        // remove all resource
+        for (s in textures.keys) { removeTexture(s) }
+        for (s in textureAtlases.keys) { removeAtlas(s) }
+
+        // music and sound will be automatically removed
     }
 }
