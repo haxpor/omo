@@ -34,6 +34,7 @@ class GameStateManager(game: Game){
     }
 
     fun setState(gameState: GameState) {
+        this.gameStates.forEach { it.dispose() }
         this.gameStates.clear()
         this.gameStates.push(gameState)
     }
