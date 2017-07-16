@@ -28,7 +28,7 @@ class Content: Disposable {
     }
 
     fun removeTexture(key: String) {
-        val tex = textures.get(key)
+        val tex = textures[key]
         if (tex != null) {
             textures.remove(key)
             tex.dispose()
@@ -45,7 +45,7 @@ class Content: Disposable {
     }
 
     fun removeAtlas(key: String) {
-        val atlas = textureAtlases.get(key)
+        val atlas = textureAtlases[key]
         if (atlas != null) {
             textureAtlases.remove(key)
             atlas.dispose()
@@ -63,7 +63,7 @@ class Content: Disposable {
     }
 
     fun removeSound(key: String) {
-        val s = sounds.get(key)
+        val s = sounds[key]
         if (s != null) {
             sounds.remove(key)
             s.dispose()
@@ -81,7 +81,7 @@ class Content: Disposable {
     }
 
     fun removeMusic(key: String) {
-        val m = musics.get(key)
+        val m = musics[key]
         if (m != null) {
             musics.remove(key)
             m.dispose()
@@ -90,8 +90,8 @@ class Content: Disposable {
 
     override fun dispose() {
         // remove all resource
-        for (s in textures.keys) { removeTexture(s) }
-        for (s in textureAtlases.keys) { removeAtlas(s) }
+        textures.keys.toSet().asIterable().forEach { removeTexture(it) }
+        textureAtlases.keys.toSet().asIterable().forEach { removeAtlas(it) }
 
         // music and sound will be automatically removed
     }
