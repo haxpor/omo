@@ -1,6 +1,7 @@
 package io.wasin.omo.handlers
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.utils.Disposable
 import io.wasin.omo.Game
 import io.wasin.omo.states.*
 
@@ -10,7 +11,7 @@ import java.util.Stack
  * Created by haxpor on 5/14/17.
  */
 
-class GameStateManager(game: Game){
+class GameStateManager(game: Game): Disposable {
     var game: Game
         private set
     private var gameStates: Stack<GameState>
@@ -46,5 +47,9 @@ class GameStateManager(game: Game){
     fun popState() {
         val g = this.gameStates.pop()
         g.dispose()
+    }
+
+    override fun dispose() {
+        gameStates.forEach { it.dispose() }
     }
 }
